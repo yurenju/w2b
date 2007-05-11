@@ -1,4 +1,4 @@
-#summary One-sentence summary of this page.
+#簡介與使用方式
 
 = Introduction =
 
@@ -17,4 +17,3 @@ http://farm1.static.flickr.com/199/441659204_434a5e606d_o.png
 = 問題 =
 * 目前路徑不能有中文
 * 如果 XML 文件不能通過驗證，通常也沒辦法轉換，遇到這個情形你使用 Issue 回報，並且附上您的 XML 檔案。
-
