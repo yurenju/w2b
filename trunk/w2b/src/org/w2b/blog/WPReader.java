@@ -1,4 +1,4 @@
-package edu.ncyu.blog;
+package org.w2b.blog;
 
 import java.io.IOException;
 import java.text.ParseException;

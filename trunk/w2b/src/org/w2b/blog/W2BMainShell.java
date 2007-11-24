@@ -1,4 +1,4 @@
-package edu.ncyu.blog;
+package org.w2b.blog;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -20,6 +20,9 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Link;
 import org.jdom.JDOMException;
+import org.w2b.blog.W2B;
+import org.w2b.blog.WPReader;
+import org.w2b.blog.Wordpress;
 
 import com.google.gdata.data.Feed;
 import com.google.gdata.util.ServiceException;

@@ -1,4 +1,4 @@
-package edu.ncyu.blog;
+package org.w2b.blog;
 
 import java.util.Date;
 
