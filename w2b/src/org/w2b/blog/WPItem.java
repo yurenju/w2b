@@ -14,37 +14,37 @@ public class WPItem {
 	private WPComment[] comments;
 	
 	public String[] getCategories() {
-		return categories;
+		return this.categories;
 	}
 	public void setCategories(String[] categories) {
 		this.categories = categories;
 	}
 	public WPComment[] getComments() {
-		return comments;
+		return this.comments;
 	}
 	public void setComments(WPComment[] comments) {
 		this.comments = comments;
 	}
 	public String getContent() {
-		return content;
+		return this.content;
 	}
 	public void setContent(String content) {
 		this.content = content;
 	}
 	public Date getPostDate() {
-		return postDate;
+		return this.postDate;
 	}
 	public void setPostDate(Date postDate) {
 		this.postDate = postDate;
 	}
 	public int getStatus() {
-		return status;
+		return this.status;
 	}
 	public void setStatus(int status) {
 		this.status = status;
 	}
 	public String getTitle() {
-		return title;
+		return this.title;
 	}
 	public void setTitle(String title) {
 		this.title = title;

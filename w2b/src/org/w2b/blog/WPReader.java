@@ -3,21 +3,19 @@ package org.w2b.blog;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
+//import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.Scanner;
+//import java.util.Scanner;
 import java.util.Vector;
 
-import javax.swing.JOptionPane;
+//import javax.swing.JOptionPane;
 
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.Namespace;
 import org.jdom.input.SAXBuilder;
-
-import com.google.gdata.util.ServiceException;
 
 public class WPReader {
 	private String filename;
@@ -32,7 +30,8 @@ public class WPReader {
 		document = builder.build(filename);
 	}
 	
-	public Wordpress read() throws ParseException {
+	@SuppressWarnings("unchecked")
+	public Wordpress read() throws IOException {
 		Wordpress w = new Wordpress();
 		Namespace nwp = Namespace.getNamespace("wp", "http://wordpress.org/export/1.0/");
 		Namespace ncontent = Namespace.getNamespace("content", "http://purl.org/rss/1.0/modules/content/");
@@ -41,7 +40,8 @@ public class WPReader {
 		// category
 		List<Element> eCategories = root.getChild("channel").getChildren("category", nwp);
 		for (Element c : eCategories) {
-			w.addCategory(c.getChildText("category_nicename", nwp));
+			//w.addCategory(c.getChildText("category_nicename", nwp));
+			w.addCategory(c.getChildText("cat_name", nwp));
 		}
 		
 		// item
@@ -74,21 +74,35 @@ public class WPReader {
 			Element ePostDate = item.getChild("post_date", nwp);
 			String strDate = ePostDate.getText();
 			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
-			Date date = format.parse(strDate);
-			wpItem.setPostDate(date);
+			//Date date = format.parse(strDate);
+			//wpItem.setPostDate(date);
+			try {
+				wpItem.setPostDate( format.parse(strDate) );
+			} catch (ParseException e) {
+				// TODO 自動產生 catch 區塊
+				e.printStackTrace();
+			}
 			
 			// comments
 			List<Element> eComments = item.getChildren("comment", nwp);
             Vector<WPComment> vecComments = new Vector<WPComment>();
             WPComment[] comments;
             
+            
             for (Element c : eComments) {
                 WPComment comment = new WPComment();
+//                a.setText( c.getChildText("comment_author", nwp) );
+//                comment.setAuthor(a.toString());
                 comment.setAuthor(c.getChildText("comment_author", nwp));
                 comment.setContent(c.getChildText("comment_content", nwp));
                 comment.setAuthorEmail(c.getChildText("comment_author_email", nwp));
                 comment.setAuthorUrl(c.getChildText("comment_author_url", nwp));
-                comment.setDate(format.parse(c.getChildText("comment_date", nwp)));
+                try {
+					comment.setDate(format.parse(c.getChildText("comment_date", nwp)));
+				} catch (ParseException e) {
+					// TODO 自動產生 catch 區塊
+					e.printStackTrace();
+				}
                 vecComments.add(comment);
             }
             comments = new WPComment[vecComments.size()];
