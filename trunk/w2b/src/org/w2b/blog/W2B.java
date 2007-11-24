@@ -6,22 +6,27 @@ import java.net.URL;
 import java.text.ParseException;
 import java.util.List;
 import java.util.Scanner;
-import java.util.StringTokenizer;
+//import java.util.StringTokenizer;
 import java.util.TimeZone;
 
 import org.jdom.JDOMException;
 
-import com.google.gdata.client.GoogleService;
-import com.google.gdata.data.Category;
-import com.google.gdata.data.DateTime;
-import com.google.gdata.data.Entry;
-import com.google.gdata.data.Feed;
-import com.google.gdata.data.Link;
-import com.google.gdata.data.Person;
-import com.google.gdata.data.PlainTextConstruct;
-import com.google.gdata.data.TextConstruct;
-import com.google.gdata.util.AuthenticationException;
-import com.google.gdata.util.ServiceException;
+//import com.google.gdata.client.GoogleService;
+//import com.google.gdata.data.Category;
+//import com.google.gdata.data.DateTime;
+//import com.google.gdata.data.Entry;
+//import com.google.gdata.data.Feed;
+//import com.google.gdata.data.Link;
+//import com.google.gdata.data.Person;
+//import com.google.gdata.data.PlainTextConstruct;
+////import com.google.gdata.data.TextConstruct;
+//import com.google.gdata.util.AuthenticationException;
+//import com.google.gdata.util.ServiceException;
+
+import com.google.gdata.client.*;
+import com.google.gdata.data.*;
+import com.google.gdata.util.*;
+
 
 public class W2B {
 	private String username;
@@ -31,6 +36,12 @@ public class W2B {
 	private GoogleService service;
 	private Person author;
 	
+	/**
+	 * 
+	 * @param username <code>String</code> Google username
+	 * @param password <code>String</code> Google password
+	 * @param blogUrl <code>String</code> Blogger's URL
+	 */
 	public W2B(String username, String password, String blogUrl) {
 		super();
 		this.username = username;
@@ -40,7 +51,6 @@ public class W2B {
 	
 	public boolean connect() throws IOException, ServiceException {
 		service = new GoogleService("blogger", "Wordpress2Blogger");
-		Feed resultFeed;
 		
 		try {
 			service.setUserCredentials(username, password);		
@@ -49,7 +59,7 @@ public class W2B {
 			return false;
 		}
 		getPostUrl();
-		resultFeed = service.getFeed(new URL("http://www.blogger.com/feeds/default/blogs"), Feed.class);
+		Feed resultFeed = service.getFeed(new URL("http://www.blogger.com/feeds/default/blogs"), Feed.class);
 		author = resultFeed.getAuthors().get(0);
 
 		return true;
@@ -69,8 +79,21 @@ public class W2B {
 		}
 		return true;
 	}
+//	public static void deletePost(GoogleService myService, Entry entryToDelete)
+//      throws ServiceException, IOException {
+//    URL deleteUrl = new URL(entryToDelete.getEditLink().getHref());
+//    myService.delete(deleteUrl);
+//	}
+//	
+//	public static Entry updatePostTitle(GoogleService myService,
+//		      Entry entryToUpdate, String newTitle) throws ServiceException,
+//		      IOException {
+//		    entryToUpdate.setTitle(new PlainTextConstruct(newTitle));
+//		    URL editUrl = new URL(entryToUpdate.getEditLink().getHref());
+//		    return myService.update(editUrl, entryToUpdate);
+//	}
 	
-	public void addPost(WPItem wpItem) throws MalformedURLException, IOException {
+	public void addPost(WPItem wpItem) throws IOException {
 		Entry entry = new Entry();
 		Entry resultEntry = new Entry();
 		
@@ -151,56 +174,6 @@ public class W2B {
 				postUrl = link.getHref();
 			}			
 		}		
-	}
-	
-	public static void main(String[] args) {
-		String wpXml = args[0];
-		Scanner scanner = new Scanner(System.in);
-		System.out.print("Blog URL: ");
-		String blogUrl = scanner.next();
-		System.out.print("username: ");
-		String username = scanner.next();
-		System.out.print("password: ");
-		String password = scanner.next();
-		Wordpress w = new Wordpress();
-		WPReader reader = new WPReader(wpXml);
-		try {
-			reader.open();
-			w = reader.read();
-		} catch (ParseException e) {
-			// TODO ?ªå??¢ç? catch ???
-			e.printStackTrace();
-		} catch (JDOMException e) {
-			// TODO ?ªå??¢ç? catch ???
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO ?ªå??¢ç? catch ???
-			e.printStackTrace();
-		}
-		W2B w2b = new W2B(username, password, blogUrl);
-		try {
-			w2b.connect();
-		} catch (IOException e1) {
-			// TODO ?ªå??¢ç? catch ???
-			e1.printStackTrace();
-		} catch (ServiceException e1) {
-			// TODO ?ªå??¢ç? catch ???
-			e1.printStackTrace();
-		}
-		
-		for (int i = 0; i < w.getItems().length; i++) {
-			System.out.println( (i+1) + ": " + w.getItems()[i].getTitle());
-			try {
-				w2b.addPost(w.getItems()[i]);
-			} catch (MalformedURLException e) {
-				// TODO ?ªå??¢ç? catch ???
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO ?ªå??¢ç? catch ???
-				e.printStackTrace();
-			}
-		}
-	}
-	
+	}	
 	
 }

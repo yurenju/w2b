@@ -116,7 +116,7 @@ public class W2BMainShell {
 		GridLayout gridLayout = new GridLayout();
 		gridLayout.numColumns = 4;
 		sShell = new Shell();
-		sShell.setText("Shell");
+		sShell.setText("Wordpress to Blogger");
 		sShell.setLayout(gridLayout);
 		sShell.setSize(new Point(357, 383));
 		label = new Label(sShell, SWT.NONE);
