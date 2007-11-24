@@ -10,31 +10,31 @@ public class WPComment {
 	private String content;
 	
 	public String getAuthor() {
-		return this.author;
+		return author;
 	}
 	public void setAuthor(String author) {
 		this.author = author;
 	}
 	public String getAuthorEmail() {
-		return this.authorEmail;
+		return authorEmail;
 	}
 	public void setAuthorEmail(String authorEmail) {
 		this.authorEmail = authorEmail;
 	}
 	public String getAuthorUrl() {
-		return this.authorUrl;
+		return authorUrl;
 	}
 	public void setAuthorUrl(String authorUrl) {
 		this.authorUrl = authorUrl;
 	}
 	public String getContent() {
-		return this.content;
+		return content;
 	}
 	public void setContent(String content) {
 		this.content = content;
 	}
 	public Date getDate() {
-		return this.date;
+		return date;
 	}
 	public void setDate(Date date) {
 		this.date = date;

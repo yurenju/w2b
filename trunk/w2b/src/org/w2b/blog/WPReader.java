@@ -3,13 +3,9 @@ package org.w2b.blog;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-//import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-//import java.util.Scanner;
 import java.util.Vector;
-
-//import javax.swing.JOptionPane;
 
 import org.jdom.Document;
 import org.jdom.Element;
@@ -20,38 +16,58 @@ import org.jdom.input.SAXBuilder;
 public class WPReader {
 	private String filename;
 	private Document document;
-	
-	WPReader(String filename) {
+	private Wordpress wordpress;
+	private Namespace nwp;
+	private Namespace ncontent;
+	private SimpleDateFormat format;
+	/**
+	 * Wordpress XML Reader
+	 * @param filename - XML file name
+	 */
+	public WPReader(String filename) {
 		this.filename = filename;
+		wordpress = new Wordpress();
+		nwp = Namespace.getNamespace("wp", "http://wordpress.org/export/1.0/");
+		ncontent = Namespace.getNamespace("content", "http://purl.org/rss/1.0/modules/content/");
+		format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
 	}
-	
-	public void open() throws JDOMException, IOException {
+	/**
+	 * Open the XML file
+	 * @throws IOException
+	 */
+	public void open() throws IOException {
 		SAXBuilder builder = new SAXBuilder();
-		document = builder.build(filename);
+		try {
+			document = builder.build(filename);
+		} catch (JDOMException e) {
+			throw new IOException("XML Format Error\n"+e.getMessage());
+		} 
 	}
-	
-	@SuppressWarnings("unchecked")
+	/**
+	 * Read XML to Wordpress Class
+	 * @return <code>Wordpress</code>
+	 * @throws IOException
+	 */
 	public Wordpress read() throws IOException {
-		Wordpress w = new Wordpress();
-		Namespace nwp = Namespace.getNamespace("wp", "http://wordpress.org/export/1.0/");
-		Namespace ncontent = Namespace.getNamespace("content", "http://purl.org/rss/1.0/modules/content/");
 		Element root = document.getRootElement();
-		
-		// category
+		readcategory(root);
+		readitem(root);		
+		return wordpress;
+	}
+	private void readcategory(Element root) {
 		List<Element> eCategories = root.getChild("channel").getChildren("category", nwp);
 		for (Element c : eCategories) {
-			//w.addCategory(c.getChildText("category_nicename", nwp));
-			w.addCategory(c.getChildText("cat_name", nwp));
+			wordpress.addCategory(c.getChildText("cat_name", nwp));
 		}
-		
-		// item
+	}
+	private void readitem(Element root) throws IOException {
 		List<Element> eItems = root.getChild("channel").getChildren("item");
 		for (Element item : eItems) {
 			WPItem wpItem = new WPItem();
-			
+			// Title
 			wpItem.setTitle(item.getChildText("title"));
+			// Content
 			wpItem.setContent(item.getChildText("encoded", ncontent));
-			
 			// status
 			if (item.getChildText("status", nwp).compareTo("publish") == 0) {
 				wpItem.setStatus(WPItem.STATUS_PUBLISH);
@@ -71,46 +87,36 @@ public class WPReader {
 			wpItem.setCategories(vecCategory.toArray(itemCategories));
 			
 			// postDate
-			Element ePostDate = item.getChild("post_date", nwp);
-			String strDate = ePostDate.getText();
-			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
-			//Date date = format.parse(strDate);
-			//wpItem.setPostDate(date);
+			
 			try {
-				wpItem.setPostDate( format.parse(strDate) );
-			} catch (ParseException e) {
-				// TODO 自動產生 catch 區塊
-				e.printStackTrace();
+				wpItem.setPostDate(format.parse( item.getChildText("post_date", nwp) ));
+			} catch (ParseException e1) {
+				throw new IOException(e1.getMessage());
 			}
+			readcomments(item,wpItem);
 			
-			// comments
-			List<Element> eComments = item.getChildren("comment", nwp);
-            Vector<WPComment> vecComments = new Vector<WPComment>();
-            WPComment[] comments;
-            
-            
-            for (Element c : eComments) {
-                WPComment comment = new WPComment();
-//                a.setText( c.getChildText("comment_author", nwp) );
-//                comment.setAuthor(a.toString());
-                comment.setAuthor(c.getChildText("comment_author", nwp));
-                comment.setContent(c.getChildText("comment_content", nwp));
-                comment.setAuthorEmail(c.getChildText("comment_author_email", nwp));
-                comment.setAuthorUrl(c.getChildText("comment_author_url", nwp));
-                try {
-					comment.setDate(format.parse(c.getChildText("comment_date", nwp)));
-				} catch (ParseException e) {
-					// TODO 自動產生 catch 區塊
-					e.printStackTrace();
-				}
-                vecComments.add(comment);
-            }
-            comments = new WPComment[vecComments.size()];
-            wpItem.setComments(vecComments.toArray(comments));
-			
-			w.addItem(wpItem);
-		}
-		
-		return w;
+			wordpress.addItem(wpItem);
+		}		
+	}
+	private void readcomments(Element item,WPItem wpItem) throws IOException {
+		List<Element> eComments = item.getChildren("comment", nwp);
+        Vector<WPComment> vecComments = new Vector<WPComment>();
+        WPComment[] comments;
+                    
+        for (Element c : eComments) {
+            WPComment comment = new WPComment();
+            comment.setAuthor(c.getChildText("comment_author", nwp));
+            comment.setContent(c.getChildText("comment_content", nwp));
+            comment.setAuthorEmail(c.getChildText("comment_author_email", nwp));
+            comment.setAuthorUrl(c.getChildText("comment_author_url", nwp));
+            try {
+				comment.setDate(format.parse( c.getChildText("comment_date", nwp) ));
+			} catch (ParseException e) {
+				throw new IOException(e.getMessage());
+			}
+            vecComments.add(comment);
+        }
+        comments = new WPComment[vecComments.size()];
+        wpItem.setComments(vecComments.toArray(comments));
 	}
 }
