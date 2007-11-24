@@ -1,4 +1,4 @@
-package edu.ncyu.blog;
+package org.w2b.blog;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -105,13 +105,13 @@ public class W2B {
 			URL commentUrl = new URL(blogUrl + "feeds/" + postId + "/comments/default");
 			
 			for (WPComment wpComment : wpItem.getComments()) {
-				// FIXME èˆŠ Yuren's Info Area ä¸Šçš„ Spam
+				// FIXME ??Yuren's Info Area ä¸Šç? Spam
 				if (wpComment.getContent().contains("pretty good!"))
 					continue;
 				
 				Entry comment = new Entry();
 				
-//				Blogger API æœƒå¿½ç•¥æ‰ Comment çš„  Authorï¼Œæ•…ä¸‹é¢é€™æ®µç„¡ä»»ä½•æ•ˆç”¨
+//				Blogger API ?ƒå¿½?¥æ? Comment ?? Authorï¼Œæ?ä¸‹é¢?™æ®µ?¡ä»»ä½•æ???
 //				Person commentAuthor = new Person(wpComment.getAuthor());
 //				if (wpComment.getAuthorEmail() != null)
 //					commentAuthor.setEmail(wpComment.getAuthorEmail());
@@ -168,23 +168,23 @@ public class W2B {
 			reader.open();
 			w = reader.read();
 		} catch (ParseException e) {
-			// TODO è‡ªå‹•ç”¢ç”Ÿ catch å€å¡Š
+			// TODO ?ªå??¢ç? catch ???
 			e.printStackTrace();
 		} catch (JDOMException e) {
-			// TODO è‡ªå‹•ç”¢ç”Ÿ catch å€å¡Š
+			// TODO ?ªå??¢ç? catch ???
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO è‡ªå‹•ç”¢ç”Ÿ catch å€å¡Š
+			// TODO ?ªå??¢ç? catch ???
 			e.printStackTrace();
 		}
 		W2B w2b = new W2B(username, password, blogUrl);
 		try {
 			w2b.connect();
 		} catch (IOException e1) {
-			// TODO è‡ªå‹•ç”¢ç”Ÿ catch å€å¡Š
+			// TODO ?ªå??¢ç? catch ???
 			e1.printStackTrace();
 		} catch (ServiceException e1) {
-			// TODO è‡ªå‹•ç”¢ç”Ÿ catch å€å¡Š
+			// TODO ?ªå??¢ç? catch ???
 			e1.printStackTrace();
 		}
 		
@@ -193,10 +193,10 @@ public class W2B {
 			try {
 				w2b.addPost(w.getItems()[i]);
 			} catch (MalformedURLException e) {
-				// TODO è‡ªå‹•ç”¢ç”Ÿ catch å€å¡Š
+				// TODO ?ªå??¢ç? catch ???
 				e.printStackTrace();
 			} catch (IOException e) {
-				// TODO è‡ªå‹•ç”¢ç”Ÿ catch å€å¡Š
+				// TODO ?ªå??¢ç? catch ???
 				e.printStackTrace();
 			}
 		}
