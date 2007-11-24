@@ -1,4 +1,4 @@
-package org.w2b.blog;
+
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -190,7 +190,7 @@ public class W2BMainShell {
 				
 				new Thread() {
 					public void run() {
-						W2B w2b = new W2B(strUsername, strPassword, strBlogUrl);
+						W2B w2b = new W2B(strUsername, strPassword, strBlogUrl,filename.getText());
 						try {
 							w2b.connect();
 							final Feed feed = w2b.getPosts();
@@ -248,44 +248,32 @@ public class W2BMainShell {
 				final Display d = display;
 				
 				switchEnable();
-				final WPReader reader = new WPReader(filename.getText());
-				
-				try {
-					reader.open();
-				} catch (JDOMException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
 				
 				new Thread() {
 					public void run() {
 						try {
-							final Wordpress w = reader.read();
-							W2B w2b = new W2B(strUsername, strPassword, strBlogUrl);
+							final W2B w2b = new W2B(strUsername, strPassword, strBlogUrl,filename.getText());
 							w2b.connect();
 
 							d.asyncExec(new Runnable() {
 								public void run() {
 								if (table.isDisposed ()) return;
 								table.clearAll();
-									for (int i = 0; i < w.getItems().length; i++) {
+									for (int i = 0; i < w2b.count(); i++) {
 										TableItem item = new TableItem(table, SWT.NONE);
 										item.setText(0, Integer.toString(i+1));
-										item.setText(1, w.getItems()[i].getTitle());
+										item.setText(1, w2b.getItems()[i].getTitle());
 									}
 								}
 							});
 							
-							for (final int[] i = new int[1]; i[0] < w.getItems().length; i[0]++) {
-								w2b.addPost(w.getItems()[i[0]]);
+							for (final int[] i = new int[1]; i[0] < w2b.count(); i[0]++) {
+								w2b.addPost(w2b.getItems()[i[0]]);
 								
 								d.asyncExec(new Runnable() {
 									public void run() {
 									if (progressBar.isDisposed ()) return;
-										progressBar.setSelection(i[0]/w.getItems().length*10);
+										progressBar.setSelection(i[0]/w2b.count()*10);
 										TableItem tableItem = table.getItem(i[0]);
 										tableItem.setFont(new Font(Display.getDefault(), "\u65b0\u7d30\u660e\u9ad4", 9, SWT.BOLD));
 									}
@@ -298,9 +286,6 @@ public class W2BMainShell {
 								}
 							});
 							
-						} catch (ParseException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
 						} catch (IOException e1) {
 							// TODO Auto-generated catch block
 							e1.printStackTrace();
